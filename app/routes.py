@@ -101,7 +101,7 @@ def add_resource(asset_no):
     return render_template('add_resource.html', asset_no=asset_no)
 
 # --- Admin Routes ---
-def decorator(f):
+    def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not current_user.is_authenticated:

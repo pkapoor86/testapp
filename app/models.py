@@ -2,15 +2,21 @@ from app import db
 import hashlib
 
 class User(db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(64), nullable=False)
+    roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users', lazy='dynamic'))
 
     def set_password(self, password):
         self.password = hashlib.sha256(password.encode()).hexdigest()
 
     def check_password(self, password):
         return self.password == hashlib.sha256(password.encode()).hexdigest()
+
+    def get_roles(self):
+        return [role.name for role in self.roles]
 
 class Inventory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,18 +49,3 @@ user_roles = db.Table('user_roles',
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(64), nullable=False)
-    roles = db.relationship('Role', secondary=user_roles, backref=db.backref('users', lazy='dynamic'))
-
-    def set_password(self, password):
-        self.password = hashlib.sha256(password.encode()).hexdigest()
-
-    def check_password(self, password):
-        return self.password == hashlib.sha256(password.encode()).hexdigest()
-
-    def get_roles(self):
-        return [role.name for role in self.roles]

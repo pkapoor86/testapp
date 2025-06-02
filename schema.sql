@@ -128,3 +128,12 @@ CREATE TABLE `user_roles` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-06-01  3:44:35
+
+CREATE TABLE IF NOT EXISTS audit_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    action VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id INT NOT NULL,
+    performed_by VARCHAR(100),
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);

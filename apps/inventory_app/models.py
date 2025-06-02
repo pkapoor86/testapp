@@ -1,4 +1,4 @@
-from app import db
+from apps.inventory_app import db
 import hashlib
 
 class User(db.Model):

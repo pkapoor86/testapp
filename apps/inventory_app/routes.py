@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort
-from app import db
-from app.models import User, Inventory, Resource, Storage, AuditLog
+from apps.inventory_app import db
+from apps.inventory_app.models import User, Inventory, Resource, Storage, AuditLog
 from functools import wraps
 from flask_login import current_user
 

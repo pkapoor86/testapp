@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+{% extends "layout.html" %}
+{% block title %}Audit Log{% endblock %}
+{% block content %}
+<h2>🧾 Audit Log</h2>
+<div class="table-responsive">
+  <table class="table table-dark table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Action</th>
+        <th>Entity Type</th>
+        <th>Entity ID</th>
+        <th>Performed By</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in audit_entries %}
+      <tr>
+        <td>{{ entry.id }}</td>
+        <td>{{ entry.action }}</td>
+        <td>{{ entry.entity_type }}</td>
+        <td>{{ entry.entity_id }}</td>
+        <td>{{ entry.performed_by }}</td>
+        <td>{{ entry.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>GCP Inventory Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/material-dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='demo/demo.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body class="g-sidenav-show bg-gray-100">
+  <div class="wrapper">
+    {% include 'includes/sidebar.html' %}
+    <div class="main-panel">
+      {% include 'includes/navbar.html' %}
+      <div class="content">
+        <div class="container-fluid">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Files -->
+  <script src="{{ url_for('static', filename='js/core/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/core/bootstrap-material-design.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/material-dashboard.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Edit Resource{% endblock %}
+{% block content %}
+<div class="container">
+  <h2>Edit Resource</h2>
+  <form method="POST">
+    <div class="form-group">
+      <label>vCPU</label>
+      <input name="vcpu" value="{{ resource.vcpu }}" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>RAM</label>
+      <input name="ram" value="{{ resource.ram }}" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>Private IP</label>
+      <input name="private_ip" value="{{ resource.private_ip }}" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>Public IP?</label>
+      <select name="public_ip_enabled" class="form-control" onchange="togglePublicIp(this)">
+        <option value="no" {% if not resource.public_ip_enabled %}selected{% endif %}>No</option>
+        <option value="yes" {% if resource.public_ip_enabled %}selected{% endif %}>Yes</option>
+      </select>
+    </div>
+    <div class="form-group" id="public_ip_field" {% if not resource.public_ip_enabled %}style="display:none;"{% endif %}>
+      <label>Public IP</label>
+      <input name="public_ip" value="{{ resource.public_ip }}" class="form-control">
+    </div>
+    <button class="btn btn-primary">Update</button>
+  </form>
+</div>
+<script>
+function togglePublicIp(select) {
+  document.getElementById('public_ip_field').style.display =
+    select.value === 'yes' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}Assign Role{% endblock %}
+{% block content %}
+<div class="container">
+  <h2>Assign Role to User</h2>
+  <form method="POST">
+    <div class="form-group">
+      <label>Select User</label>
+      <select class="form-control" name="user_id">
+        {% for user in users %}
+          <option value="{{ user.id }}">{{ user.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Select Role</label>
+      <select class="form-control" name="role_id">
+        {% for role in roles %}
+          <option value="{{ role.id }}">{{ role.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">Assign</button>
+  </form>
+</div>
+{% endblock %}

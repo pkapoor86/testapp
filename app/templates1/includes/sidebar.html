@@ -1,0 +1,44 @@
+<div class="sidebar" data-color="purple" data-background-color="white">
+  <div class="logo">
+    <a href="{{ url_for('routes.home') }}" class="simple-text logo-normal">
+      GCP Inventory
+    </a>
+  </div>
+  <div class="sidebar-wrapper">
+    <ul class="nav">
+      <li class="nav-item {% if request.endpoint == 'routes.home' %}active{% endif %}">
+        <a class="nav-link" href="{{ url_for('routes.home') }}">
+          <i class="material-icons">dashboard</i>
+          <p>Dashboard</p>
+        </a>
+      </li>
+      <li class="nav-item {% if request.endpoint == 'routes.inventory' %}active{% endif %}">
+        <a class="nav-link" href="{{ url_for('routes.inventory') }}">
+          <i class="material-icons">inventory</i>
+          <p>Inventory</p>
+        </a>
+      </li>
+      {% if session.get('user') %}
+        <li class="nav-item {% if request.endpoint == 'routes.register' %}active{% endif %}">
+          <a class="nav-link" href="{{ url_for('routes.register') }}">
+            <i class="material-icons">person_add</i>
+            <p>Add User</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('routes.logout') }}">
+            <i class="material-icons">logout</i>
+            <p>Logout</p>
+          </a>
+        </li>
+      {% else %}
+        <li class="nav-item {% if request.endpoint == 'routes.login' %}active{% endif %}">
+          <a class="nav-link" href="{{ url_for('routes.login') }}">
+            <i class="material-icons">login</i>
+            <p>Login</p>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>

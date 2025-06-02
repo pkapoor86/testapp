@@ -1,0 +1,94 @@
+from flask import abort, session
+from functools import wraps
+
+def require_role(*roles):
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if 'user' not in session or session['user'].get('role_name') not in roles:
+                abort(403)  # Forbidden
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
+from flask import Blueprint, render_template_string, request, redirect, session, url_for
+from app.controllers.user_controller import UserController
+from app.controllers.inventory_controller import InventoryController
+
+routes = Blueprint('routes', __name__)
+
+@routes.route('/')
+def home():
+    if 'user' in session:
+        user = session['user']
+        role = user.get('role_name', 'user')
+        extra_links = ''
+        if role in ['admin', 'editor']:
+            extra_links = ' | <a href="/register">Register User</a> | <a href="/inventory/add">Add Inventory</a>'
+        return f"Hello, {user['username']}! Role: {role} <a href='/logout'>Logout</a>{extra_links}"
+    return "Welcome! <a href='/login'>Login</a>"
+
+@routes.route('/register', methods=['GET', 'POST'])
+@require_role('admin', 'editor')
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role_name = request.form.get('role', 'user')  # default to user role
+
+        # Get role_id from DB for the given role_name
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM roles WHERE name=%s", (role_name,))
+        role = cursor.fetchone()
+        role_id = role[0] if role else None
+        conn.close()
+
+        UserController.register(username, password, role_id)
+        return "New user registered successfully. <a href='/'>Home</a>"
+
+    return render_template_string('''
+        <form method="post">
+            Username: <input name="username"><br>
+            Password: <input name="password" type="password"><br>
+            Role:
+            <select name="role">
+                <option value="user">User</option>
+                <option value="editor">Editor</option>
+                <option value="admin">Admin</option>
+            </select><br>
+            <input type="submit" value="Register">
+        </form>
+    ''')
+@routes.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = UserController.login(username, password)
+        if user:
+            session['user'] = user
+            return redirect(url_for('routes.home'))
+        return "Login failed."
+    return render_template_string('<form method="post">Username: <input name="username">Password: <input name="password" type="password"><input type="submit"></form>')
+
+@routes.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('routes.home'))
+
+@routes.route('/inventory')
+def inventory():
+    if 'user' not in session:
+        return redirect(url_for('routes.login'))
+    items = InventoryController.list_inventory()
+    return render_template_string("<h2>Inventory</h2><ul>{% for item in items %}<li>{{ item.name }} in {{ item.zone }}</li>{% endfor %}</ul>", items=items)
+
+@routes.route('/inventory/add', methods=['GET', 'POST'])
+@require_role('admin', 'editor')
+def add_inventory():
+    if request.method == 'POST':
+        name = request.form['name']
+        zone = request.form['zone']
+        InventoryController.add_inventory_item(name, zone)
+        return redirect(url_for('routes.inventory'))
+    return render_template_string('<form method="post">VM Name: <input name="name">Zone: <input name="zone"><input type="submit"></form>')
